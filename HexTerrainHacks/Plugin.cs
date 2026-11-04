@@ -4,6 +4,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using System;
 using System.Reflection;
+using UnityEngine;
 
 namespace HexTerrainHacks
 {
@@ -34,7 +35,7 @@ namespace HexTerrainHacks
                 new ConfigDescription("The radius of the level ground operation.",
                 new AcceptableValueRange<float>(1f, 10f)));
 
-            LevelRadius.SettingChanged += OnLevelRadiusChanged;
+            LevelRadius.SettingChanged += OnConfigChange;
 
             _harmonyInstance = new Harmony(PluginGuid);
             _harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
@@ -46,7 +47,7 @@ namespace HexTerrainHacks
         {
             Log.LogInfo($"{PluginName} v{PluginVersion} unloaded.");
 
-            LevelRadius.SettingChanged -= OnLevelRadiusChanged;
+            LevelRadius.SettingChanged -= OnConfigChange;
 
             _harmonyInstance?.UnpatchSelf();
             _harmonyInstance = null;
@@ -54,12 +55,12 @@ namespace HexTerrainHacks
             Log = null;
         }
 
-        private void OnLevelRadiusChanged(object sender, EventArgs e)
+        private void OnConfigChange(object sender, EventArgs e)
         {
             if (ObjectDB.instance != null && ObjectDB.instance.TryGetTerrainOp("hex_flat_ground", out var terrainOp))
             {
                 terrainOp.m_settings.m_levelRadius = LevelRadius.Value;
-                terrainOp.m_settings.m_paintRadius = LevelRadius.Value;
+                terrainOp.m_settings.m_paintRadius = Mathf.Ceil(LevelRadius.Value) + 0.5f;
             }
         }
     }
