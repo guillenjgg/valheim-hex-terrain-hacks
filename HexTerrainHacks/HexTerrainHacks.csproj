@@ -67,7 +67,6 @@
   <ItemGroup>
     <Compile Include="Core\FlatGroundRegistry.cs" />
     <Compile Include="Patches\ObjectDBInitializationPatch.cs" />
-    <Compile Include="Patches\ZNetSceneAwakePatch.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

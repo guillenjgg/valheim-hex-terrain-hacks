@@ -48,40 +48,11 @@ namespace HexTerrainHacks.Core
                 settings.m_levelRadius = Plugin.LevelRadius.Value;
                 settings.m_square = true;
                 settings.m_smooth = false;
+                settings.m_paintCleared = false;
             }
 
             RegisterTerrainOp(database);
             RegisterPiece(database);
-
-            if (ZNetScene.instance)
-            {
-                RegisterPrefab(ZNetScene.instance);
-            }
-        }
-
-        internal static void RegisterPrefab(ZNetScene scene)
-        {
-            if (!_flatGroundPrefab)
-            {
-                return;
-            }
-
-            var prefabs = AccessTools.Field(typeof(ZNetScene), "m_prefabs").GetValue(scene) as List<GameObject>;
-            var namedPrefabs = AccessTools.Field(typeof(ZNetScene), "m_namedPrefabs").GetValue(scene) as Dictionary<int, GameObject>;
-            var hash = PrefabName.GetStableHashCode();
-
-            if (namedPrefabs.TryGetValue(hash, out var existingPrefab))
-            {
-                if (existingPrefab != _flatGroundPrefab)
-                {
-                    Plugin.Log.LogError($"[Terrain] Prefab hash conflict: {PrefabName}");
-                }
-
-                return;
-            }
-
-            prefabs.Add(_flatGroundPrefab);
-            namedPrefabs.Add(hash, _flatGroundPrefab);
         }
 
         internal static void RegisterTerrainOp(ObjectDB database)
