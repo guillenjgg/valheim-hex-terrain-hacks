@@ -1,5 +1,6 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System.Collections.Generic;
+using HexTerrainHacks.Assets;
 using UnityEngine;
 
 namespace HexTerrainHacks.Core
@@ -42,6 +43,13 @@ namespace HexTerrainHacks.Core
 
                 _flatGroundPrefab = Object.Instantiate(vanillaPrefab, _prefabContainer.transform, false);
                 _flatGroundPrefab.name = PrefabName;
+
+                var icon = AssetHelper.LoadSprite("HexTerrainHacks.Assets.flat-ground.png");
+
+                if (icon)
+                {
+                    _flatGroundPrefab.GetComponent<Piece>().m_icon = icon;
+                }
 
                 var settings = _flatGroundPrefab.GetComponent<TerrainOp>().m_settings;
                 settings.m_level = true;
