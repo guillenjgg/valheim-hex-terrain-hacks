@@ -10,6 +10,8 @@ namespace HexTerrainHacks.Core
         private static GameObject _flatGroundPrefab;
         private static GameObject _prefabContainer;
 
+        internal static TerrainOp.Settings FlatGroundSettings { get; private set; }
+
         internal static void Initialize(ObjectDB database)
         {
             if (!_flatGroundPrefab)
@@ -27,6 +29,7 @@ namespace HexTerrainHacks.Core
                 if (!vanillaPrefab)
                 {
                     Plugin.Log.LogError("[Terrain] mud_road_v2 not found in Hoe PieceTable.");
+
                     return;
                 }
 
@@ -40,16 +43,17 @@ namespace HexTerrainHacks.Core
                 _flatGroundPrefab = Object.Instantiate(vanillaPrefab, _prefabContainer.transform, false);
                 _flatGroundPrefab.name = PrefabName;
 
-                var piece = _flatGroundPrefab.GetComponent<Piece>();
-                piece.m_name = "Flat Ground";
-
                 var settings = _flatGroundPrefab.GetComponent<TerrainOp>().m_settings;
                 settings.m_level = true;
                 settings.m_levelRadius = Plugin.LevelRadius.Value;
                 settings.m_square = true;
                 settings.m_smooth = false;
                 settings.m_paintCleared = true;
-                settings.m_paintRadius = Plugin.LevelRadius.Value;
+                settings.m_paintRadius = Mathf.Ceil(Plugin.LevelRadius.Value) + 0.5f;
+                settings.m_paintExp = 0.01f;
+                settings.m_halfOffset = false;
+
+                FlatGroundSettings = settings;
             }
 
             RegisterTerrainOp(database);
