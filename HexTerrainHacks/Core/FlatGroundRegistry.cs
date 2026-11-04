@@ -8,6 +8,7 @@ namespace HexTerrainHacks.Core
     {
         private const string PrefabName = "hex_flat_ground";
         private static GameObject _flatGroundPrefab;
+        private static GameObject _prefabContainer;
 
         internal static void Initialize(ObjectDB database)
         {
@@ -29,9 +30,15 @@ namespace HexTerrainHacks.Core
                     return;
                 }
 
-                _flatGroundPrefab = Object.Instantiate(vanillaPrefab);
+                if (!_prefabContainer)
+                {
+                    _prefabContainer = new GameObject("HexTerrainHacks_Prefabs");
+                    _prefabContainer.SetActive(false);
+                    Object.DontDestroyOnLoad(_prefabContainer);
+                }
+
+                _flatGroundPrefab = Object.Instantiate(vanillaPrefab, _prefabContainer.transform, false);
                 _flatGroundPrefab.name = PrefabName;
-                _flatGroundPrefab.SetActive(false);
 
                 var piece = _flatGroundPrefab.GetComponent<Piece>();
                 piece.m_name = "Flat Ground";
@@ -41,8 +48,6 @@ namespace HexTerrainHacks.Core
                 settings.m_levelRadius = Plugin.LevelRadius.Value;
                 settings.m_square = true;
                 settings.m_smooth = false;
-
-                Plugin.Log.LogInfo("[Terrain] Flat Ground prefab initialized.");
             }
 
             RegisterTerrainOp(database);
@@ -92,6 +97,9 @@ namespace HexTerrainHacks.Core
             {
                 database.m_terrainOps.Add(terrainOp);
             }
+
+            var terrainOpsByHash = AccessTools.Field(typeof(ObjectDB), "m_terrainOpsByHash").GetValue(database) as Dictionary<int, TerrainOp>;
+            terrainOpsByHash[PrefabName.GetStableHashCode()] = terrainOp;
         }
 
         internal static void RegisterPiece(ObjectDB database)
