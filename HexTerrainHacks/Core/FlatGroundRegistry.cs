@@ -54,6 +54,17 @@ namespace HexTerrainHacks.Core
                 settings.m_halfOffset = false;
 
                 FlatGroundSettings = settings;
+
+                var ghost = _flatGroundPrefab.transform.Find("_GhostOnly");
+
+                if (ghost && ghost.GetComponent<ParticleSystem>() && ghost.GetComponent<ParticleSystemRenderer>())
+                {
+                    ghost.gameObject.AddComponent<FlatGroundPreviewComponent>();
+                }
+                else
+                {
+                    Plugin.Log.LogWarning("[Terrain] Flat Ground preview particle system not found.");
+                }
             }
 
             RegisterTerrainOp(database);

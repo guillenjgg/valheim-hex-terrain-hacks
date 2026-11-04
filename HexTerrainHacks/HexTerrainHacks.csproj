@@ -63,9 +63,14 @@
       <HintPath>..\..\..\valheim_mod_libraries\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>..\..\..\valheim_mod_libraries\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\FlatGroundRegistry.cs" />
+    <Compile Include="Core\FlatGroundPreviewComponent.cs" />
     <Compile Include="Patches\ObjectDBInitializationPatch.cs" />
     <Compile Include="Patches\TerrainCompSquarePaintPatch.cs" />
     <Compile Include="Plugin.cs" />
