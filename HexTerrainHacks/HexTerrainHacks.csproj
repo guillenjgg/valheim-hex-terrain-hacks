@@ -35,6 +35,10 @@
       <HintPath>..\..\..\bepinex_mod_libs\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="assembly_utils_publicized">
+      <HintPath>..\..\..\publicized_assemblies\v1.0.21\assembly_utils_publicized.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="assembly_valheim_publicized">
       <HintPath>..\..\..\publicized_assemblies\v1.0.21\assembly_valheim_publicized.dll</HintPath>
       <Private>False</Private>
@@ -61,7 +65,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Patches\TerrainOpLevelGroundPatch.cs" />
+    <Compile Include="Core\FlatGroundRegistry.cs" />
+    <Compile Include="Patches\ObjectDBInitializationPatch.cs" />
+    <Compile Include="Patches\ZNetSceneAwakePatch.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
