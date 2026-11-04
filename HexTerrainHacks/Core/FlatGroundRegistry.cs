@@ -48,7 +48,8 @@ namespace HexTerrainHacks.Core
                 settings.m_levelRadius = Plugin.LevelRadius.Value;
                 settings.m_square = true;
                 settings.m_smooth = false;
-                settings.m_paintCleared = false;
+                settings.m_paintCleared = true;
+                settings.m_paintRadius = Plugin.LevelRadius.Value;
             }
 
             RegisterTerrainOp(database);

@@ -54,11 +54,12 @@ namespace HexTerrainHacks
             Log = null;
         }
 
-        private void OnLevelRadiusChanged(object sender, System.EventArgs e)
+        private void OnLevelRadiusChanged(object sender, EventArgs e)
         {
             if (ObjectDB.instance != null && ObjectDB.instance.TryGetTerrainOp("hex_flat_ground", out var terrainOp))
             {
                 terrainOp.m_settings.m_levelRadius = LevelRadius.Value;
+                terrainOp.m_settings.m_paintRadius = LevelRadius.Value;
             }
         }
     }
