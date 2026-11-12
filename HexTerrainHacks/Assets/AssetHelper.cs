@@ -19,7 +19,10 @@ namespace HexTerrainHacks.Assets
             {
                 if (stream == null)
                 {
-                    Plugin.Log.LogWarning($"[Assets] Embedded resource not found: {resourceName}");
+                    if (Plugin.EnableDebugLogging)
+                    {
+                        Plugin.Log?.LogWarning($"[Assets] Embedded resource not found: {resourceName}");
+                    }
                     return null;
                 }
 
@@ -31,7 +34,10 @@ namespace HexTerrainHacks.Assets
                     if (!LoadImage(texture, buffer.ToArray(), false))
                     {
                         UnityEngine.Object.Destroy(texture);
-                        Plugin.Log.LogWarning($"[Assets] Failed to decode image: {resourceName}");
+                        if (Plugin.EnableDebugLogging)
+                        {
+                            Plugin.Log?.LogWarning($"[Assets] Failed to decode image: {resourceName}");
+                        }
                         return null;
                     }
 

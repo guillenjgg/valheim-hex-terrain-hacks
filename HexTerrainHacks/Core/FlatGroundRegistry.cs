@@ -29,7 +29,10 @@ namespace HexTerrainHacks.Core
 
                 if (!vanillaPrefab)
                 {
-                    Plugin.Log.LogError("[Terrain] mud_road_v2 not found in Hoe PieceTable.");
+                    if (Plugin.EnableDebugLogging)
+                    {
+                        Plugin.Log?.LogError("[Terrain] mud_road_v2 not found in Hoe PieceTable.");
+                    }
 
                     return;
                 }
@@ -63,6 +66,11 @@ namespace HexTerrainHacks.Core
 
                 FlatGroundSettings = settings;
 
+                if (Plugin.EnableDebugLogging)
+                {
+                    Plugin.Log?.LogDebug("[Terrain] Created Flat Ground prefab.");
+                }
+
                 var ghost = _flatGroundPrefab.transform.Find("_GhostOnly");
 
                 if (ghost && ghost.GetComponent<ParticleSystem>() && ghost.GetComponent<ParticleSystemRenderer>())
@@ -71,7 +79,10 @@ namespace HexTerrainHacks.Core
                 }
                 else
                 {
-                    Plugin.Log.LogWarning("[Terrain] Flat Ground preview particle system not found.");
+                    if (Plugin.EnableDebugLogging)
+                    {
+                        Plugin.Log?.LogWarning("[Terrain] Flat Ground preview particle system not found.");
+                    }
                 }
             }
 
@@ -105,11 +116,33 @@ namespace HexTerrainHacks.Core
             }
 
             var hoePrefab = database.GetItemPrefab("Hoe");
+
+            if (!hoePrefab)
+            {
+                return;
+            }
+
             var pieceTable = hoePrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_buildPieces;
+
+            _flatGroundPrefab.GetComponent<Piece>().m_enabled = Plugin.IsModEnabled;
+
+            if (!Plugin.IsModEnabled)
+            {
+                pieceTable.m_pieces.Remove(_flatGroundPrefab);
+                if (Plugin.EnableDebugLogging)
+                {
+                    Plugin.Log?.LogDebug("[Terrain] Flat Ground disabled.");
+                }
+                return;
+            }
 
             if (!pieceTable.m_pieces.Contains(_flatGroundPrefab))
             {
                 pieceTable.m_pieces.Add(_flatGroundPrefab);
+                if (Plugin.EnableDebugLogging)
+                {
+                    Plugin.Log?.LogDebug("[Terrain] Added Flat Ground to the hoe menu.");
+                }
             }
         }
     }
