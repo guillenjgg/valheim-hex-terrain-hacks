@@ -17,7 +17,7 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\AppData\Roaming\com.kesomannen.gale\valheim\profiles\Dev\BepInEx\plugins\HexTerrainHacks\</OutputPath>
+    <OutputPath>..\..\..\debug_builds\HexTerrainHacks\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,6 +29,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Game|AnyCPU'">
+    <OutputPath>..\..\..\..\..\AppData\Roaming\com.kesomannen.gale\valheim\profiles\Dev\BepInEx\plugins\HexTerrainHacks\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -45,6 +52,10 @@
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\bepinex_mod_libs\BepInEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="HexValheimSdk, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\HexValheimSdk.0.1.0-alpha.1\lib\netstandard2.0\HexValheimSdk.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
@@ -92,6 +103,7 @@
     <None Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
     <None Include="README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -100,4 +112,17 @@
     <EmbeddedResource Include="Assets\flat-ground.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- Register only the task: the package's default targets merge every output DLL. -->
+  <UsingTask TaskName="ILRepack" AssemblyFile="packages\ILRepack.Lib.MSBuild.Task.2.0.46\build\ILRepack.Lib.MSBuild.Task.dll" />
+  <Target Name="MergeHexSdk" AfterTargets="CopyFilesToOutputDirectory" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="!Exists('packages\ILRepack.Lib.MSBuild.Task.2.0.46\build\ILRepack.Lib.MSBuild.Task.dll')" Text="Restore NuGet packages before building (ILRepack.Lib.MSBuild.Task 2.0.46 is missing)." />
+    <ItemGroup>
+      <!-- Always start with the unmerged compiler output, including incremental builds. -->
+      <_HexMergeInput Include="@(IntermediateAssembly)" />
+      <_HexMergeInput Include="@(ReferencePath)" Condition="'%(ReferencePath.Filename)' == 'HexValheimSdk'" />
+      <_HexMergeLibraryPath Include="@(ReferencePath->'%(RootDir)%(Directory)')" />
+    </ItemGroup>
+    <Error Condition="'@(_HexMergeInput-&gt;Count())' != '2'" Text="Expected the mod assembly and exactly one resolved HexValheimSdk assembly for ILRepack." />
+    <ILRepack InputAssemblies="@(_HexMergeInput)" LibraryPath="@(_HexMergeLibraryPath)" OutputFile="$(TargetPath)" TargetKind="Dll" DebugInfo="false" />
+  </Target>
 </Project>
